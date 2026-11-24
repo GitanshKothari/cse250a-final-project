@@ -1,0 +1,23 @@
+name: zoo_cnn
+seeds: [0, 1, 2]
+models:
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+    }
+  - {
+      name: hmm_hist+behavior_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  - { name: gru, type: neural, arch: gru }
+  - { name: cnn, type: neural, arch: cnn } # dilations 1,2,4,8 -> R = 31
+  - { name: cnn_w7, type: neural, arch: cnn, dilations: [1, 1, 1] } # R = 7
+paired:
+  - [gru, cnn] # Q5
+  - [cnn_w7, cnn] # Q6
+  - [ngram+behavior, cnn] # Q7
+  - [hmm_hist+behavior_all, cnn] # Q7

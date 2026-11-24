@@ -1,0 +1,47 @@
+name: zoo_neural
+seeds: [0, 1, 2]
+models:
+  # references (feature + logistic regression)
+  - { name: behavior, type: feature_lr, groups: [behavior, context] }
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+    }
+  - {
+      name: hmm_hist+behavior_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  - {
+      name: hmm_hist+lds+behavior_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, lds, behavior, context],
+      hmm: { K: 8 },
+      lds: { d: 4 },
+      hmm_data: all,
+    }
+  # neural
+  - { name: mlp, type: neural, arch: mlp }
+  - { name: gru, type: neural, arch: gru }
+  - { name: gru+hmm, type: neural, arch: gru, inputs: [hmm], hmm: { K: 8 } }
+  - { name: gru+lds, type: neural, arch: gru, inputs: [lds], lds: { d: 4 } }
+  - {
+      name: gru+hmm+lds,
+      type: neural,
+      arch: gru,
+      inputs: [hmm, lds],
+      hmm: { K: 8 },
+      lds: { d: 4 },
+    }
+paired:
+  - [gru, gru+hmm+lds] # Q1 (the main question)
+  - [gru, gru+hmm] # Q1 ablation
+  - [gru, gru+lds] # Q1 ablation
+  - [ngram+behavior, gru] # Q2
+  - [hmm_hist+behavior_all, gru] # Q2
+  - [mlp, gru] # Q3
+  - [hmm_hist+lds+behavior_all, gru+hmm+lds] # Q4
+  - [hmm_hist+behavior_all, hmm_hist+lds+behavior_all] # Q4

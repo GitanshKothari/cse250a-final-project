@@ -1,0 +1,30 @@
+name: confirm_trap_features
+claim: >-
+  Primary (t=10, alive, paired CI excludes 0): hmm_hist+behavior beats behavior.
+  Secondary: hmm_hist+behavior beats ngram+behavior (the HMM is more than an n-gram
+  summary); ngram+behavior vs behavior.
+models:
+  - { name: context_only, type: feature_lr, groups: [context] }
+  - { name: behavior, type: feature_lr, groups: [behavior, context] }
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+    }
+  - {
+      name: hmm+behavior,
+      type: feature_lr,
+      groups: [hmm, behavior, context],
+      hmm: { K: 8 },
+    }
+  - {
+      name: hmm_hist+behavior,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+    }
+paired:
+  - [behavior, hmm_hist+behavior]
+  - [ngram+behavior, hmm_hist+behavior]
+  - [behavior, ngram+behavior]
+  - [hmm+behavior, hmm_hist+behavior]

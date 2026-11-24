@@ -1,0 +1,38 @@
+name: diag_hmm_vs_ngram
+models:
+  - { name: behavior, type: feature_lr, groups: [behavior, context] }
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+    }
+  - {
+      name: ngram+behavior_clfdata,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+      fit_on: clf_train,
+    }
+  - {
+      name: ngram3+behavior,
+      type: feature_lr,
+      groups: [ngram, trigram, behavior, context],
+      trigram_min_frac: 0.01,
+    }
+  - {
+      name: hmm_hist+behavior,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+    }
+  - {
+      name: hmm_hist+ngram+behavior,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, ngram, behavior, context],
+      hmm: { K: 8 },
+    }
+paired:
+  - [ngram+behavior_clfdata, hmm_hist+behavior] # Q1: equal data budget
+  - [ngram+behavior_clfdata, ngram+behavior] # Q1: how much does 2x data give n-grams?
+  - [ngram+behavior, hmm_hist+ngram+behavior] # Q2: HMM on top of n-grams
+  - [hmm_hist+behavior, hmm_hist+ngram+behavior] # Q2: n-grams on top of the HMM
+  - [ngram+behavior, ngram3+behavior] # Q3: trigrams

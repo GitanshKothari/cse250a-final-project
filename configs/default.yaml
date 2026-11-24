@@ -1,0 +1,44 @@
+seed: 0
+
+paths:
+  raw: data/raw
+  processed: data/processed
+  models: models
+  results: results
+  logs: logs
+
+data:
+  repo_id: nebius/SWE-agent-trajectories
+  shards: null
+  max_runs: null
+  min_steps: 2
+
+split:
+  file: configs/splits.csv
+  folds_file: configs/folds.csv
+
+  test: 0.15
+  val: 0.15
+  hmm_frac_of_train: 0.5
+
+hmm:
+  n_states_grid: [3, 4, 5, 6, 8]
+  n_iter: 100
+  tol: 1.0e-4
+  n_init: 10
+  pseudocount: 0.01
+  max_train_runs: 8000
+  max_len: 150
+  select_by: val_loglik
+
+early:
+  prefixes: [3, 5, 10, 15, 20, 30]
+
+eval:
+  n_boot: 1000
+  primary_t: 10
+  fixed_min_steps: 31
+  stop_fracs: [0.05, 0.1, 0.2, 0.3, 0.5]
+
+cv:
+  n_folds: 5

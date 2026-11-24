@@ -1,0 +1,91 @@
+name: tuned_comparison
+seeds: [0, 1, 2]
+models:
+  - {
+      name: behavior,
+      type: feature_lr,
+      groups: [behavior, context],
+      grid: { C: [0.1, 1.0, 10.0] },
+    }
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+      grid: { C: [0.1, 1.0, 10.0] },
+    }
+  - name: hmm_hist+behavior_all
+    type: feature_lr
+    groups: [hmm, hmm_hist, behavior, context]
+    hmm_data: all
+    hmm: { K: 8 }
+    grid: { hmm: [{ K: 6 }, { K: 8 }, { K: 12 }, { K: 16 }, { K: 24 }] }
+  - name: cchmm+behavior
+    type: feature_lr
+    groups: [cchmm, behavior, context]
+    hmm_data: all
+    hmm: { K: 8 }
+    grid: { hmm: [{ K: 6 }, { K: 8 }, { K: 12 }, { K: 16 }] }
+  - name: rich_hmm_hist+behavior
+    type: feature_lr
+    groups: [hmm, hmm_hist, behavior, context]
+    hmm_data: all
+    hmm: { K: 8, alphabet: rich }
+    grid:
+      {
+        hmm:
+          [
+            { K: 6, alphabet: rich },
+            { K: 8, alphabet: rich },
+            { K: 12, alphabet: rich },
+            { K: 16, alphabet: rich },
+          ],
+      }
+  - name: hsmm_hmm_hist+behavior
+    type: feature_lr
+    groups: [hmm, hmm_hist, behavior, context]
+    hmm_data: all
+    hmm: { K: 8, n_phases: 3 }
+    grid:
+      {
+        hmm:
+          [
+            { K: 6, n_phases: 2 },
+            { K: 6, n_phases: 3 },
+            { K: 8, n_phases: 2 },
+            { K: 8, n_phases: 3 },
+            { K: 12, n_phases: 2 },
+            { K: 12, n_phases: 3 },
+          ],
+      }
+  - name: lds+behavior
+    type: feature_lr
+    groups: [lds, behavior, context]
+    hmm_data: all
+    lds: { d: 4 }
+    grid: { lds: [{ d: 2 }, { d: 4 }, { d: 8 }] }
+  - name: landmark_hgb_ngram+behavior
+    type: feature_lr
+    groups: [ngram, behavior, context]
+    landmark: true
+    classifier: hgb
+    grid:
+      {
+        clf_params:
+          [
+            { learning_rate: 0.05, max_leaf_nodes: 15 },
+            { learning_rate: 0.05, max_leaf_nodes: 31 },
+            { learning_rate: 0.05, max_leaf_nodes: 63 },
+            { learning_rate: 0.1, max_leaf_nodes: 15 },
+            { learning_rate: 0.1, max_leaf_nodes: 31 },
+            { learning_rate: 0.1, max_leaf_nodes: 63 },
+          ],
+      }
+paired:
+  - [behavior, hmm_hist+behavior_all]
+  - [ngram+behavior, hmm_hist+behavior_all]
+  - [hmm_hist+behavior_all, cchmm+behavior]
+  - [hmm_hist+behavior_all, rich_hmm_hist+behavior]
+  - [hmm_hist+behavior_all, hsmm_hmm_hist+behavior]
+  - [hmm_hist+behavior_all, lds+behavior]
+  - [ngram+behavior, landmark_hgb_ngram+behavior]
+  - [hmm_hist+behavior_all, landmark_hgb_ngram+behavior]

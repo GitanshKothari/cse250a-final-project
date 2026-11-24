@@ -1,0 +1,10 @@
+name: hsmm_capacity
+seeds: [0]
+models:
+  - {
+      name: hmm24_hist+behavior_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 24 },
+      hmm_data: all,
+    }

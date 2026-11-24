@@ -1,0 +1,40 @@
+name: k14_check_seed0
+seeds: [0]
+models:
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+    }
+  - {
+      name: hmm_hist_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  - {
+      name: hmm_hist_K14,
+      type: feature_lr,
+      groups: [hmm, hmm_hist],
+      hmm: { K: 14 },
+      hmm_data: all,
+    }
+  - {
+      name: hmm_hist+behavior_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  - {
+      name: hmm_hist+behavior_K14,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 14 },
+      hmm_data: all,
+    }
+paired:
+  - [hmm_hist+behavior_all, hmm_hist+behavior_K14] # K1
+  - [hmm_hist_all, hmm_hist_K14] # K1, HMM alone
+  - [ngram+behavior, hmm_hist+behavior_K14] # K2

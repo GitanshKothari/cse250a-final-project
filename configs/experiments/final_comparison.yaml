@@ -1,0 +1,36 @@
+name: final_comparison
+claim: >-
+  Primary (t=10, alive cohort, pooled AUROC, paired 95% issue-bootstrap CI excludes 0 for
+  every seed): gru beats ngram+behavior, and gru beats hmm_hist+behavior_all.
+  Secondary (reported with CIs, not claims of superiority): the same comparisons in
+  within-issue AUROC at t=10 and t=20; hmm_hist+behavior_all vs behavior;
+  hmm_hist+behavior_all vs ngram+behavior; landmark_hgb_ngram+behavior vs ngram+behavior.
+seeds: [0, 1, 2]
+models:
+  - { name: behavior, type: feature_lr, groups: [behavior, context] }
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+    }
+  - {
+      name: hmm_hist+behavior_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  - {
+      name: landmark_hgb_ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+      landmark: true,
+      classifier: hgb,
+    }
+  - { name: gru, type: neural, arch: gru }
+paired:
+  - [ngram+behavior, gru] # primary
+  - [hmm_hist+behavior_all, gru] # primary
+  - [behavior, hmm_hist+behavior_all] # secondary
+  - [ngram+behavior, hmm_hist+behavior_all] # secondary
+  - [ngram+behavior, landmark_hgb_ngram+behavior] # secondary

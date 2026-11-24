@@ -1,0 +1,26 @@
+name: hmm_full_data
+seeds: [0, 1, 2] # protocol §3: 3 seeds for stochastic (HMM) models; deterministic ones run once
+models:
+  - { name: behavior, type: feature_lr, groups: [behavior, context] }
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+    }
+  - {
+      name: hmm_hist+behavior,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+    }
+  - {
+      name: hmm_hist+behavior_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+paired:
+  - [hmm_hist+behavior, hmm_hist+behavior_all] # Q1
+  - [ngram+behavior, hmm_hist+behavior_all] # Q2
+  - [behavior, hmm_hist+behavior_all] # Q3

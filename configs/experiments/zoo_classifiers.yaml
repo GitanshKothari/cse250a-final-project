@@ -1,0 +1,70 @@
+name: zoo_classifiers
+seeds: [0, 1, 2]
+models:
+  - { name: behavior, type: feature_lr, groups: [behavior, context] }
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+    }
+  - {
+      name: hmm_hist+behavior_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  # 15: gradient-boosted trees
+  - {
+      name: hgb_ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+      classifier: hgb,
+    }
+  - {
+      name: hgb_hmm_hist+ngram+behavior,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, ngram, behavior, context],
+      hmm: { K: 8 },
+      hmm_data: all,
+      classifier: hgb,
+    }
+  - {
+      name: landmark_ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+      landmark: true,
+    }
+  - {
+      name: landmark_hgb_ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+      landmark: true,
+      classifier: hgb,
+    }
+  - {
+      name: markov1,
+      type: feature_lr,
+      groups: [markov],
+      scorers: { markov: { order: 1 } },
+    }
+  - {
+      name: markov2,
+      type: feature_lr,
+      groups: [markov],
+      scorers: { markov: { order: 2 } },
+    }
+  - {
+      name: markov1+behavior,
+      type: feature_lr,
+      groups: [markov, behavior, context],
+      scorers: { markov: { order: 1 } },
+    }
+paired:
+  - [ngram+behavior, hgb_ngram+behavior]
+  - [hmm_hist+behavior_all, hgb_hmm_hist+ngram+behavior]
+  - [ngram+behavior, landmark_ngram+behavior]
+  - [hgb_ngram+behavior, landmark_hgb_ngram+behavior]
+  - [markov1, markov2]
+  - [behavior, markov1+behavior]
+  - [ngram+behavior, markov1+behavior]

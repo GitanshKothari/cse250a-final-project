@@ -1,0 +1,74 @@
+name: zoo_hmm_family
+seeds: [0, 1, 2]
+models:
+  - { name: behavior, type: feature_lr, groups: [behavior, context] }
+  - { name: ngram, type: feature_lr, groups: [ngram] }
+  - {
+      name: ngram+behavior,
+      type: feature_lr,
+      groups: [ngram, behavior, context],
+    }
+  - {
+      name: hmm_hist_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  - {
+      name: hmm_hist+behavior_all,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  # 16: class-conditional HMM (shared emissions, class-specific transitions)
+  - {
+      name: cchmm,
+      type: feature_lr,
+      groups: [cchmm],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  - {
+      name: cchmm+behavior,
+      type: feature_lr,
+      groups: [cchmm, behavior, context],
+      hmm: { K: 8 },
+      hmm_data: all,
+    }
+  # 17b: HMM over a richer alphabet (symbol x repeat x new file x passed = 96)
+  - {
+      name: rich_hmm_hist+behavior,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8, alphabet: rich },
+      hmm_data: all,
+    }
+  # 18: explicit-duration HMM (3 Coxian phases per state), started at the plain HMM
+  - {
+      name: hsmm_hmm_hist+behavior,
+      type: feature_lr,
+      groups: [hmm, hmm_hist, behavior, context],
+      hmm: { K: 8, n_phases: 3 },
+      hmm_data: all,
+    }
+  # 18b: linear dynamical system (Kalman filter) on the 19-D step encoding
+  - { name: lds, type: feature_lr, groups: [lds], lds: { d: 4 }, hmm_data: all }
+  - {
+      name: lds+behavior,
+      type: feature_lr,
+      groups: [lds, behavior, context],
+      lds: { d: 4 },
+      hmm_data: all,
+    }
+paired:
+  - [ngram, hmm_hist_all] # sequence models alone
+  - [hmm_hist_all, cchmm]
+  - [hmm_hist_all, lds]
+  - [hmm_hist+behavior_all, cchmm+behavior]
+  - [hmm_hist+behavior_all, rich_hmm_hist+behavior]
+  - [hmm_hist+behavior_all, hsmm_hmm_hist+behavior]
+  - [hmm_hist+behavior_all, lds+behavior]
+  - [ngram+behavior, rich_hmm_hist+behavior]
+  - [behavior, lds+behavior]
