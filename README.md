@@ -1,6 +1,6 @@
 # Reproduce the CSE 250A final project
 
-Start with Final_Report.pdf. The main study uses the 12-symbol parser, frozen issue splits, and five cross-validation folds. Two additional implementations in this archive produce appendix results. Each has its own package named hmm_agents. Run each section from the indicated directory so its imports, data and outputs stay together.
+The main study uses the 12-symbol parser, frozen issue splits, and five cross-validation folds. Two additional implementations in this archive produce appendix results. Each has its own package named hmm_agents. Run each section from the indicated directory so its imports, data and outputs stay together.
 
 ## Setup and data
 
@@ -63,4 +63,4 @@ python scripts/experiments/exp02b_stability.py
 python scripts/experiments/exp04_k14_modes.py
 ```
 
-See results/experiments/exp02/seed\*/ and stability.csv for transition and dwell statistics, and results/experiments/exp04/ for mode matching. The K=14 model in archive/parallel_dev/models_snapshot is an input to exp04 and must stay at that path.
+See results/experiments/exp02/seed/ and stability.csv for transition and dwell statistics, and results/experiments/exp04/ for mode matching. The K=14 model in archive/parallel_dev/models_snapshot is an input to exp04 and must stay at that path.
